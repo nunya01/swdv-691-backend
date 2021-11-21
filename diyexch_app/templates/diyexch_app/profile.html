@@ -1,0 +1,11 @@
+{% extends "diyexch_app/base.html" %}
+
+{% block content %}
+<h1>This is the {{ name }} page</h1>
+<p>Logged in user: {{ user.get_username }}</p>
+<p>User email: {{ user.email }}</p>
+<p>User ID: {{ user.id }}</p>
+<p>Phone: {{ user.profile.phone }}</p>
+<p><a href="/users/logout">Log out</a></p>
+<p><a href="/app/account_home">Account Home</a></p>
+{% endblock content %}

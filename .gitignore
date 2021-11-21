@@ -1,2 +1,13 @@
 # environment
 .env
+
+# dev files
+**/__pycache__/
+
+**/migrations/
+
+db.sqlite3
+
+# virtual environment
+env
+
