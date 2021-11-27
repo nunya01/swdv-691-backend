@@ -6,4 +6,24 @@
 
 <p><a href="/users/logout">Log out</a></p>
 <p><a href="/app/profile">Profile</a></p>
+<p><a href="/app/search">Tool Search</a></p>
+<p><a href="/app/create_tool">Add Tool</a></p>
+
+<!-- Display tool cards -->
+<h2>My Tools</h2>
+{% for tool in tool_list %}
+
+  <div class="card mb-3" style="max-width: 25em; margin: auto;">
+    <h3 class="card-header">{{ tool.name }}</h3>
+    <!-- <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top"> -->
+    <div class="card-body">
+      <p class="card-text">Item Description: {{ tool.description }}</p>
+    </div>
+    <div class="card-body">
+      <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
+      <!-- <a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a> -->
+    </div>
+  </div>
+
+{% endfor %}
 {% endblock content %}

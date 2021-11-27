@@ -6,6 +6,9 @@
 <p>User email: {{ user.email }}</p>
 <p>User ID: {{ user.id }}</p>
 <p>Phone: {{ user.profile.phone }}</p>
+<p>
+    <img src="{{ request.user.profile.profile_pic.url }}" width=100>
+</p>
 <p><a href="/users/logout">Log out</a></p>
 <p><a href="/app/account_home">Account Home</a></p>
 {% endblock content %}

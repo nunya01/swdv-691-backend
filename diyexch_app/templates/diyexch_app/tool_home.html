@@ -1,5 +1,9 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<p>This will be the TOOL HOME page.</p>
+<h1>{{ tool.name }}</h1>
+<p>{{ tool.description }}</p>
+<p><img src="{{ tool.tool_pic.url }}" width="100"></p>
+<p><a href="/app/delete_tool/{{ tool.id }}/">Delete Tool</a></p>
+<p><a href="/app/account_home">Account Home</a></p>
 {% endblock content %}

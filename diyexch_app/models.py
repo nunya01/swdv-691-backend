@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+
+
 # Create your models here.
 
 class Profile(models.Model):
@@ -15,9 +21,8 @@ class Profile(models.Model):
     cc_exp = models.CharField(max_length=5, blank=True, null=True)
     zip_code = models.CharField(max_length=10)
     phone = models.CharField(max_length=16)
-    img_url = models.CharField(max_length=255, null=True)
+    profile_pic = models.ImageField(blank=True, null=True, upload_to=user_directory_path)
     terms_and_cond = models.BooleanField(default=False)
-
 
 # These functions update the Profile when a User is created
 @receiver(post_save, sender=User)
@@ -35,18 +40,22 @@ class Tool(models.Model):
     tool_value = models.DecimalField(max_digits=10, decimal_places=2)
     for_sale = models.BooleanField()
     description = models.CharField(max_length=500)
-    img_url = models.CharField(max_length=255, null=True)
+    tool_pic = models.ImageField(blank=True, null=True, upload_to='tool_pics/')
     name = models.CharField(max_length=255)
     visible = models.BooleanField(default=True)
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Borrow_tx(models.Model):
     # Use "delete" code, logic, or SP to make sure borrower cannot be deleted while borrowing tool,
     # make sure that tool cannot be deleted while borrowed
-    toolID = models.ForeignKey(Tool, on_delete=models.RESTRICT)
+    borrowed_tool = models.ForeignKey(Tool, on_delete=models.RESTRICT)
     borrowerID = models.IntegerField() 
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    owner_approval = models.BooleanField(default=False)
     returned = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)
     # stretch
     rating_from_owner = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)
     rating_from_borrower = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)

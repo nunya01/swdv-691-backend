@@ -1,5 +1,37 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<p>This will be the SEARCH page.</p>
+<p>Search for a tool by name.</p>
+<form action="{% url 'search' %}" method="POST">
+    {% csrf_token %} 
+    <input type="text" name="name">
+    <input type="submit" name="submit" value="Search">
+</form>
+
+<!-- handle error -->
+{% for msg in srch_error %}
+  <p>{{ msg }}</p>
+{% endfor %}
+
+<a href="{% url 'home' %}">Home</a>
+
+<!-- Display tool cards -->
+{% for tool in tool_list %}
+
+  {% if tool.visible %}
+  <div class="card mb-3" style="max-width: 35em; margin: auto;">
+    <h3 class="card-header">{{ tool.name }}</h3>
+    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
+    <div class="card-body">
+      <p class="card-text">Item Description: {{ tool.description }}</p>
+    </div>
+    <div class="card-body">
+      <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
+      <a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a>
+    </div>
+  </div>
+  {% endif %}
+
+{% endfor %}
+
 {% endblock content %}

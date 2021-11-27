@@ -5,12 +5,13 @@ from .models import Profile, Tool
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ('cc_number', 'cc_exp', 'cc_fullname','zip_code', 'phone', 'terms_and_cond')
+        fields = ('cc_number', 'cc_exp', 'cc_fullname','zip_code', 'phone', 'profile_pic', 'terms_and_cond',)
         labels = {
             'cc_number': _('* Credit Card #:'),
             'cc_exp': _('* Credit Card Exp:'),
             'cc_fullname': _('* Full name on Credit Card:'),
             'zip_code': _('Zip Code:'),
+            'profile_pic': _('Profile Image:'),
             'terms_and_cond': _('I agree to the terms and conditions:'),
         }
     def clean(self):
@@ -23,4 +24,4 @@ class ProfileForm(ModelForm):
 class ToolForm(ModelForm):
     class Meta:
         model = Tool
-        fields = ('name', 'description', 'tool_value', 'for_sale', 'visible', 'img_url')
+        fields = ('name', 'description', 'tool_value', 'for_sale', 'visible', 'tool_pic')
