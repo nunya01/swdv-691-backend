@@ -25,3 +25,6 @@ class ToolForm(ModelForm):
     class Meta:
         model = Tool
         fields = ('name', 'description', 'tool_value', 'for_sale', 'visible', 'tool_pic')
+        labels = {
+            'tool_value': _('Tool Value ($ USD)')
+        }

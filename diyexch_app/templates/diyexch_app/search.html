@@ -1,10 +1,10 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<p>Search for a tool by name.</p>
+<h2>Search for a Tool by Name</h2>
 <form action="{% url 'search' %}" method="POST">
     {% csrf_token %} 
-    <input type="text" name="name">
+    <input type="text" name="name" placeholder="ex: Drill">
     <input type="submit" name="submit" value="Search">
 </form>
 
@@ -13,21 +13,21 @@
   <p>{{ msg }}</p>
 {% endfor %}
 
-<a href="{% url 'home' %}">Home</a>
-
 <!-- Display tool cards -->
 {% for tool in tool_list %}
 
   {% if tool.visible %}
   <div class="card mb-3" style="max-width: 35em; margin: auto;">
     <h3 class="card-header">{{ tool.name }}</h3>
-    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
+    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top" style="max-width: 25em; align-self: center;">
     <div class="card-body">
       <p class="card-text">Item Description: {{ tool.description }}</p>
     </div>
     <div class="card-body">
       <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
+      {% if tool.owner != user and user.profile.cc_number != None %}
       <a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a>
+      {% endif %}
     </div>
   </div>
   {% endif %}

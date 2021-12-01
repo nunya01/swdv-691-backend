@@ -1,4 +1,5 @@
 {% extends "diyexch_app/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <h1>This is the {{ name }} page</h1>
@@ -6,7 +7,7 @@
 <p>Thanks for registering.  We need a little more informartion before you can use this site.</p>
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button type="submit">Submit</button>
 </form>
 <p>* CC is not required to register, but is required to borrow tools.</p>

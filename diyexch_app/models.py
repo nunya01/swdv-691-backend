@@ -36,7 +36,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Tool(models.Model):
-    ownerID = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     tool_value = models.DecimalField(max_digits=10, decimal_places=2)
     for_sale = models.BooleanField()
     description = models.CharField(max_length=500)
@@ -51,7 +51,7 @@ class Borrow_tx(models.Model):
     # Use "delete" code, logic, or SP to make sure borrower cannot be deleted while borrowing tool,
     # make sure that tool cannot be deleted while borrowed
     borrowed_tool = models.ForeignKey(Tool, on_delete=models.RESTRICT)
-    borrowerID = models.IntegerField() 
+    borrowerID = models.IntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)
     owner_approval = models.BooleanField(default=False)
     returned = models.BooleanField(default=False)

@@ -1,0 +1,21 @@
+{% extends "diyexch_app/base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 mx-auto">
+            <h1>Your Borrow Request</h1>
+            <p>Your request to borrow {{ tool.name }} is being processed.</p>
+            <ul>
+                <li>You will be contacted by the tool owner to arrange the tool exchange.</li>
+                <li>Only meet during the day time.</li>
+                <li>Only meet in a secure public location where there are people and cameras.</li>
+                <li>Do not give out your banking or credit card information to other users.</li>
+                <li>Treat other peoples property as if it is your own.</li>
+                <li>You will be financially liable if you break a borrowed tool.</li>
+            </ul>
+            <p><a href='/app/account_home'>My Home</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

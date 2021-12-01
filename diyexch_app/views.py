@@ -2,26 +2,17 @@ from django.shortcuts import render, redirect
 from .models import Profile, Tool, Borrow_tx
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm, ToolForm
 from random import sample
 
 # Create your views here.
 
-# might be able to replace these two with built-in
-#####
-def nologin_home(request):
-    # The home page for users not logged in
-    return render(request, 'diyexch_app/login.html' )
-#####
-
-
-# db queries
-
 
 def rate_user(request, id):
     pass
 
-
+@login_required()
 def first_login(request):
     """ Runs after registration. When a user is saved, a user profile is created.
         The profile requires more info than the AUTH USER allows. This should only
@@ -43,33 +34,43 @@ def first_login(request):
             form.save()
             return redirect('/app/account_home/')
         else:
-            print('Form is not valid')
             context = {'form': form}
             return render(request, 'diyexch_app/first_login.html', context)
 
     return render(request, 'diyexch_app/first_login.html', {})
 
 
-# @login_required
+@login_required()
 def account_home(request):
-    result = Tool.objects.filter(ownerID=request.user)
-    context = {"tool_list": result}
+    context = {}
+    my_tools = Tool.objects.filter(owner=request.user)
+
+    if my_tools.exists():
+        context['my_tool_list'] = my_tools
+
+    pending_txs = Borrow_tx.objects.filter(
+        borrowed_tool__owner=request.user, 
+        owner_approval=False,
+        )
+
+    if pending_txs.exists():
+        pending_req_list = pending_tx_helper(pending_txs)
+        context['req_list'] = pending_req_list
+
     return render(request, 'diyexch_app/account_home.html', context)
 
 
-# @login_required
+@login_required()
 def profile(request):
     name = {'name':'User Profile'}
     return render(request, 'diyexch_app/profile.html', name)
 
 
-# @login_required
+@login_required()
 def create_tool(request):
     if request.method == 'GET':
         form = ToolForm()
-        name = "Add a Tool"
         context = {
-            'name': name,
             'form': form
             }
         return render (request, 'diyexch_app/tool_form.html', context)
@@ -78,43 +79,42 @@ def create_tool(request):
         form = ToolForm(request.POST, request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.ownerID = request.user
+            obj.owner = request.user
             obj.save()
             rd_url = f'/app/tool_home/{obj.id}/'
             return redirect(rd_url)
         else:
             print('Form is not valid')
             context = {'form': form}
-            return render(request, 'diyexch_app/tool_form.html', context)
-
-
+        
+        
+@login_required()
 def tool_home(request, t_id):
     tool = Tool.objects.get(id=t_id)
     return render(request, 'diyexch_app/tool_home.html', {'tool': tool})
 
 
+@login_required()
 def delete_tool(request, t_id):
     tool = Tool.objects.get(id=t_id)
-    if tool.ownerID != request.user:
+    if tool.owner != request.user:
         return redirect('/app/account_home/')
     else:
         tool.delete()
-        msg = f'{tool.name} was deleted.'
-        context = {'success_msg': msg}
+        msg = f'{tool.name} was successfully deleted.'
+        context = {'success_msg': [ msg ]}
         return render(request, 'diyexch_app/success.html', context)
 
 
+@login_required()
 def borrow_tool(request, t_id):
     borrower = request.user
     tool = Tool.objects.get(id=t_id)
+    owner = tool.owner
     context = {'tool': tool}
 
     # validating
-    if borrower.id == tool.ownerID.id:
-        context.update({'err_msgs': ["You already own that tool!"]})
-        return render(request, 'diyexch_app/tool_home.html', context)
-
-    elif borrower.profile.cc_number is None:
+    if borrower.profile.cc_number is None:
         context.update({'err_msgs': ["Sorry, you need a credit card on file to borrow a tool!"]})
         return render(request, 'diyexch_app/tool_home.html', context)
 
@@ -123,29 +123,27 @@ def borrow_tool(request, t_id):
             borrowed_tool=tool,
             borrowerID=borrower.id,
         )
-        tool.objects.visible = False
+        tool.visible = False
         tool.save()
-        return render(request, 'diyexch_app/success.html')
+        context = {
+            'succ_msgs':'Please wait for the tool owner to contact you.',
+            'tool': tool,
+        }
+        return render(request, 'diyexch_app/borrow_success.html', context)
 
 
-# @login_required
-def search_by_name(request, name):
-    # ... lookup list by name, return the search results
-    return render(request, 'diyexch_app/search.html', {})
-
-
-# @login_required
+@login_required()
 def contact(request, id):
     # contact the user 
     return render(request, 'diyexch_app/conact.html', other_stuff)
 
 
-# @login_required
+@login_required()
 def search(request):
     if request.method == "POST":
         query_name = request.POST.get('name', None)
         if query_name:
-            results = Tool.objects.filter(name__icontains=query_name)
+            results = Tool.objects.filter(name__icontains=query_name, visible=True)
             if not results:
                 return render(request, 'diyexch_app/search.html', {"srch_error":["Sorry, no matching results found."]})
             else:
@@ -161,9 +159,11 @@ def search(request):
         return render(request, 'diyexch_app/search.html', context) 
 
 
-def test_function(request):
-    test_output = get_user_model() 
-    print(test_output.objects.all())
-    userList = User.objects.values()
-    print(userList)
-    return render(request, 'diyexch_app/test_output.html',{'context':test_output})
+def pending_tx_helper(pending_txs):
+    request_list = []
+    req = {}
+    for pend_tx in pending_txs:
+        req['borrower'] = User.objects.get(id=pend_tx.borrowerID)
+        req['tool'] = Tool.objects.get(id=pend_tx.borrowed_tool.id)
+        request_list.append(req)
+    return request_list

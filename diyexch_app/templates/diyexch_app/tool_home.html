@@ -3,7 +3,23 @@
 {% block content %}
 <h1>{{ tool.name }}</h1>
 <p>{{ tool.description }}</p>
-<p><img src="{{ tool.tool_pic.url }}" width="100"></p>
+<p>Value: ${{ tool.tool_value }}</p>
+
+{% if tool.for_sale %}
+<p class="text-info">This tool is for sale!</p>
+{% endif %}
+
+<p><img src="{{ tool.tool_pic.url }}" width="150"></p>
+
+{% if user == tool.owner %}
 <p><a href="/app/delete_tool/{{ tool.id }}/">Delete Tool</a></p>
+{% else %}
+    {% if user.profile.cc_number == None %}
+    <p class="text-warning">You must have a credit card on file to borrow a tool.</p>
+    {% else %}
+    <p><a href="/app/borrow_tool/{{ tool.id }}/">Borrow Tool</a></p>
+    {% endif %}
+{% endif %}
+
 <p><a href="/app/account_home">Account Home</a></p>
 {% endblock content %}

@@ -1,17 +1,42 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<h1>This is the {{ name }} page</h1>
-<p>Logged in user: {{ user.get_username }}</p>
+<h1>Home page for: {{ user.get_username }}</h1>
 
-<p><a href="/users/logout">Log out</a></p>
 <p><a href="/app/profile">Profile</a></p>
 <p><a href="/app/search">Tool Search</a></p>
 <p><a href="/app/create_tool">Add Tool</a></p>
 
+<!-- Display pending requests first -->
+{% if req_list is not None %}
+
+<h2<u>Pending Requests</u></h2>
+
+{% for req in req_list %}
+
+  <div class="card mb-3" style="max-width: 25em; margin: auto;">
+    <h3 class="card-header">Borrow Request</h3>
+    <div class="card-body">
+      <p class="card-text">{{ req.borrower.username }} wants to borrow: {{ req.tool.name }} </p>
+    </div>
+    <div class="card-body">
+      <a href="/app/tool_home/{{ req.tool.id }}/" class="card-link">Go to Tool</a>
+    </div>
+  </div>
+
+{% endfor %}
+
+{% endif %}
+
 <!-- Display tool cards -->
-<h2>My Tools</h2>
-{% for tool in tool_list %}
+<h2><u>My Tools</u></h2>
+{% if my_tool_list is None %}
+
+<p>You have not shared any tools yet.</p>
+
+{% endif %}
+
+{% for tool in my_tool_list %}
 
   <div class="card mb-3" style="max-width: 25em; margin: auto;">
     <h3 class="card-header">{{ tool.name }}</h3>
@@ -21,9 +46,9 @@
     </div>
     <div class="card-body">
       <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
-      <!-- <a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a> -->
     </div>
   </div>
 
 {% endfor %}
+
 {% endblock content %}
