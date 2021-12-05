@@ -6,12 +6,15 @@
     {% csrf_token %} 
     <input type="text" name="name" placeholder="ex: Drill">
     <input type="submit" name="submit" value="Search">
-</form>
+</form><br>
 
-<!-- handle error -->
+<!-- display error message(s) -->
 {% for msg in srch_error %}
   <p>{{ msg }}</p>
 {% endfor %}
+
+<!-- description of display -->
+<h2>{{ title }}</h2>
 
 <!-- Display tool cards -->
 {% for tool in tool_list %}

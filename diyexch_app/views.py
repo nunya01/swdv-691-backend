@@ -62,8 +62,7 @@ def account_home(request):
 
 @login_required()
 def profile(request):
-    name = {'name':'User Profile'}
-    return render(request, 'diyexch_app/profile.html', name)
+    return render(request, 'diyexch_app/profile.html',{})
 
 
 @login_required()
@@ -147,15 +146,21 @@ def search(request):
             if not results:
                 return render(request, 'diyexch_app/search.html', {"srch_error":["Sorry, no matching results found."]})
             else:
-                return render(request, 'diyexch_app/search.html', {"tool_list":results})
+                return render(request, 'diyexch_app/search.html', {"tool_list":results, "title":"Search Results"})
         else:
             return render(request, 'diyexch_app/search.html', {"srch_error":["Sorry, could you please try that again?"]})
     else:
         # provide some random preview tools on the initial search (filler)
         id_list = Tool.objects.all().values_list('id', flat=True)
-        random_id_list = sample(list(id_list), 5)
-        qs = Tool.objects.filter(id__in=random_id_list)
-        context = {'tool_list': qs}
+        sample_size = 4
+        if id_list:
+            if len(id_list) < sample_size:
+                sample_size = len(id_list)
+            random_id_list = sample(list(id_list), sample_size)
+            qs = Tool.objects.filter(id__in=random_id_list)
+            context = {'tool_list': qs, "title":"Sample Tools"}
+        else:
+            context = {}
         return render(request, 'diyexch_app/search.html', context) 
 
 

@@ -1,14 +1,17 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<h1>This is the {{ name }} page</h1>
+<h2>User Profile</h2>
 <p>Logged in user: {{ user.get_username }}</p>
 <p>User email: {{ user.email }}</p>
 <p>User ID: {{ user.id }}</p>
 <p>Phone: {{ user.profile.phone }}</p>
+
+{% if request.user.profile.profile_pic.url != None %}
 <p>
-    <img src="{{ request.user.profile.profile_pic.url }}" width=100>
+    <img src="{{ request.user.profile.profile_pic.url }}" width=100 alt="Image of {{ user.get_username }}">
 </p>
-<p><a href="/users/logout">Log out</a></p>
+{% endif %}
+
 <p><a href="/app/account_home">Account Home</a></p>
 {% endblock content %}
