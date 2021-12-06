@@ -26,13 +26,13 @@
 <!-- Display pending requests first -->
 {% if req_list is not None %}
 
-<h2<u>Pending Requests</u></h2>
+<h2><u>Pending Requests</u></h2>
 
 {% for req in req_list %}
 
   <div class="card mb-3" style="max-width: 20em; margin: auto;">
     <h3 class="card-header">Borrow Request</h3>
-    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
+    <img src="{{ req.tool.tool_pic.url }}" alt="Image of {{ req.tool.name }}" class="card-img-top">
     <div class="card-body">
       <p class="card-text">{{ req.borrower.username }} wants to borrow: {{ req.tool.name }} </p>
     </div>

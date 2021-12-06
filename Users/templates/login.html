@@ -1,13 +1,16 @@
 
 {% extends "diyexch_app/base.html" %}
 {% block content %}
-<h1>Login</h1>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<h2>Welcome!</h2> 
+<h3>Please log in to use the DIY Tool Exchange</h3>
 <p>
-    <a href = "/users/register/">Register</a>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+</p>
+<p>
+    <a href="/users/register/">Register</a>
 </p>
 {% endblock content %}

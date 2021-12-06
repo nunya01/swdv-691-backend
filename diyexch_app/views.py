@@ -110,7 +110,7 @@ def borrow_tool(request, t_id):
         tool.visible = False
         tool.save()
         context = {
-            'succ_msgs':'Please wait for the tool owner to contact you.',
+            'succ_msgs':['Please wait for the tool owner to contact you.'],
             'tool': tool,
         }
         return render(request, 'diyexch_app/borrow_success.html', context)
@@ -136,7 +136,8 @@ def search(request):
             return render(request, 'diyexch_app/search.html', {"srch_error":["Sorry, could you please try that again?"]})
     else:
         # provide some random preview tools on the initial search (filler)
-        id_list = Tool.objects.all().values_list('id', flat=True)
+        id_list = Tool.objects.filter(visible=True).values_list('id', flat=True)
+        # id_list = Tool.objects.all().values_list('id', flat=True)
         sample_size = 4
         if id_list:
             if len(id_list) < sample_size:
@@ -149,6 +150,10 @@ def search(request):
         return render(request, 'diyexch_app/search.html', context) 
 
 
+def about(request):
+    return render(request, 'diyexch_app/about.html', {})
+    
+
 def pending_tx_helper(pending_txs):
     request_list = []
     req = {}
@@ -159,29 +164,3 @@ def pending_tx_helper(pending_txs):
     return request_list
 
 
-# @login_required()
-# def first_login(request):
-#     """ Runs after registration. When a user is saved, a user profile is created.
-#         The profile requires more info than the AUTH USER allows. This should only
-#         run once after the user is created.
-#     """
-#     if request.method == 'GET':
-#         form = ProfileForm()
-#         name = "First Time Login"
-#         context = {
-#             'name': name,
-#             'form': form
-#             }
-#         return render (request, 'diyexch_app/first_login.html', context)
-
-#     if request.method == 'POST':
-#         user = request.user  # currently logged in user
-#         form = ProfileForm(request.POST, request.FILES, instance=user.profile) # User.profile is the same as Profile, but updates all
-#         if form.is_valid():
-#             form.save()
-#             return redirect('/app/account_home/')
-#         else:
-#             context = {'form': form}
-#             return render(request, 'diyexch_app/first_login.html', context)
-
-#     return render(request, 'diyexch_app/first_login.html', {})

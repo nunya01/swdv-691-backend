@@ -13,4 +13,5 @@ urlpatterns = [
     path('rate_user/<int:id>', views.rate_user), # stretch
     path('account_home/', views.account_home, name="home"),
     path('profile/', views.profile, name="profile"),
+    path('about/', views.about, name="about"),
 ]
