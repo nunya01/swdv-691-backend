@@ -9,7 +9,7 @@
 <p class="text-info">This tool is for sale!</p>
 {% endif %}
 
-<p><img src="{{ tool.tool_pic.url }}" width="150"></p>
+<p><img src="{{ tool.tool_pic.url }}" style="max-width: 15em;"></p>
 
 {% if user == tool.owner %}
 <p><a href="/app/delete_tool/{{ tool.id }}/">Delete Tool</a></p>

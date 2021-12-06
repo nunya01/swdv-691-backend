@@ -1,9 +1,25 @@
 {% extends "diyexch_app/base.html" %}
+{% load static %}
 
 {% block content %}
-<h1>Home page for: {{ user.get_username }}</h1>
+<div class="card mb-3 mt-3" style="max-width: 35em; margin: auto;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{ request.user.profile.profile_pic.url }}" class="img-fluid rounded-start"
+        alt="Profile Picture of {{ user.get_username }}" style="max-width: 10em;">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h4 class="card-title">Home of: {{ user.get_username }}</h4>
+        <p class="card-text">User ID: {{ user.id }}</p>
+        <p class="card-text">Zip Code: {{ user.profile.zip_code }}</p>
+        <p class="card-text">Email: {{ user.email }}</p>
+        <p class="card-text">Phone: {{ user.profile.phone }}</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-<p><a href="/app/profile">Profile</a></p>
 <p><a href="/app/search">Tool Search</a></p>
 <p><a href="/app/create_tool">Add Tool</a></p>
 
@@ -14,8 +30,9 @@
 
 {% for req in req_list %}
 
-  <div class="card mb-3" style="max-width: 25em; margin: auto;">
+  <div class="card mb-3" style="max-width: 20em; margin: auto;">
     <h3 class="card-header">Borrow Request</h3>
+    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
     <div class="card-body">
       <p class="card-text">{{ req.borrower.username }} wants to borrow: {{ req.tool.name }} </p>
     </div>
@@ -30,6 +47,7 @@
 
 <!-- Display tool cards -->
 <h2><u>My Tools</u></h2>
+
 {% if my_tool_list is None %}
 
 <p>You have not shared any tools yet.</p>
@@ -38,9 +56,9 @@
 
 {% for tool in my_tool_list %}
 
-  <div class="card mb-3" style="max-width: 25em; margin: auto;">
+  <div class="card mb-3" style="max-width: 20em; margin: auto;">
     <h3 class="card-header">{{ tool.name }}</h3>
-    <!-- <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top"> -->
+    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
     <div class="card-body">
       <p class="card-text">Item Description: {{ tool.description }}</p>
     </div>

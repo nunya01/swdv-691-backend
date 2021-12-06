@@ -12,6 +12,5 @@ urlpatterns = [
     path('borrow_tool/<int:t_id>/', views.borrow_tool),
     path('rate_user/<int:id>', views.rate_user), # stretch
     path('account_home/', views.account_home, name="home"),
-    path('profile/', views.profile),
-    path('first_login/', views.first_login),
+    path('profile/', views.profile, name="profile"),
 ]

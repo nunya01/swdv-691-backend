@@ -3,41 +3,15 @@ from .models import Profile, Tool, Borrow_tx
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm, ToolForm
+from .forms import ProfileForm, ToolForm, UserUpdateForm, ProfileUpdateForm
 from random import sample
 
 # Create your views here.
 
 
 def rate_user(request, id):
+    # create a user rating system
     pass
-
-@login_required()
-def first_login(request):
-    """ Runs after registration. When a user is saved, a user profile is created.
-        The profile requires more info than the AUTH USER allows. This should only
-        run once after the user is created.
-    """
-    if request.method == 'GET':
-        form = ProfileForm()
-        name = "First Time Login"
-        context = {
-            'name': name,
-            'form': form
-            }
-        return render (request, 'diyexch_app/first_login.html', context)
-
-    if request.method == 'POST':
-        user = request.user  # currently logged in user
-        form = ProfileForm(request.POST, request.FILES, instance=user.profile) # User.profile is the same as Profile, but updates all
-        if form.is_valid():
-            form.save()
-            return redirect('/app/account_home/')
-        else:
-            context = {'form': form}
-            return render(request, 'diyexch_app/first_login.html', context)
-
-    return render(request, 'diyexch_app/first_login.html', {})
 
 
 @login_required()
@@ -62,7 +36,18 @@ def account_home(request):
 
 @login_required()
 def profile(request):
-    return render(request, 'diyexch_app/profile.html',{})
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('/app/account_home')   
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+    context = {'user_form':user_form, 'profile_form':profile_form}
+    return render(request, 'diyexch_app/profile.html', context)
 
 
 @login_required()
@@ -172,3 +157,31 @@ def pending_tx_helper(pending_txs):
         req['tool'] = Tool.objects.get(id=pend_tx.borrowed_tool.id)
         request_list.append(req)
     return request_list
+
+
+# @login_required()
+# def first_login(request):
+#     """ Runs after registration. When a user is saved, a user profile is created.
+#         The profile requires more info than the AUTH USER allows. This should only
+#         run once after the user is created.
+#     """
+#     if request.method == 'GET':
+#         form = ProfileForm()
+#         name = "First Time Login"
+#         context = {
+#             'name': name,
+#             'form': form
+#             }
+#         return render (request, 'diyexch_app/first_login.html', context)
+
+#     if request.method == 'POST':
+#         user = request.user  # currently logged in user
+#         form = ProfileForm(request.POST, request.FILES, instance=user.profile) # User.profile is the same as Profile, but updates all
+#         if form.is_valid():
+#             form.save()
+#             return redirect('/app/account_home/')
+#         else:
+#             context = {'form': form}
+#             return render(request, 'diyexch_app/first_login.html', context)
+
+#     return render(request, 'diyexch_app/first_login.html', {})

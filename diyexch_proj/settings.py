@@ -29,8 +29,13 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEPLOYED = False
 
-ALLOWED_HOSTS = []
+
+if DEPLOYED: 
+    ALLOWED_HOSTS = ['www.diytool.site', 'diytool.site', 'localhost',]
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     'diyexch_app',
     'Users',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -81,13 +87,6 @@ WSGI_APPLICATION = 'diyexch_proj.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -134,18 +133,30 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Media Storage
+AWS_ACCESS_KEY_ID = env('S3_ACCESS_KEY_ID')
+
+AWS_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_STORAGE_BUCKET_NAME = 'diyexch-media'
+
+AWS_S3_REGION_NAME = 'us-east-1'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
+if DEPLOYED:
+    STATIC_ROOT = '/home/ubuntu/site/static/'
+else:
+    STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
-]
+    ]
 
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
