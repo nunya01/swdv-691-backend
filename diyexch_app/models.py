@@ -51,7 +51,7 @@ class Borrow_tx(models.Model):
     # Use "delete" code, logic, or SP to make sure borrower cannot be deleted while borrowing tool,
     # make sure that tool cannot be deleted while borrowed
     borrowed_tool = models.ForeignKey(Tool, on_delete=models.RESTRICT)
-    borrowerID = models.IntegerField()
+    borrower = models.ForeignKey(User, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now_add=True)
     owner_approval = models.BooleanField(default=False)
     returned = models.BooleanField(default=False)

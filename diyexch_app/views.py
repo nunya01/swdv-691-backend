@@ -28,8 +28,8 @@ def account_home(request):
         )
 
     if pending_txs.exists():
-        pending_req_list = pending_tx_helper(pending_txs)
-        context['req_list'] = pending_req_list
+        context['req_list'] = pending_txs
+        print(context['req_list'])
 
     return render(request, 'diyexch_app/account_home.html', context)
 
@@ -105,7 +105,7 @@ def borrow_tool(request, t_id):
     else:
         Borrow_tx.objects.create(
             borrowed_tool=tool,
-            borrowerID=borrower.id,
+            borrower=borrower,
         )
         tool.visible = False
         tool.save()
@@ -159,7 +159,6 @@ def pending_tx_helper(pending_txs):
     req = {}
     for pend_tx in pending_txs:
         req['borrower'] = User.objects.get(id=pend_tx.borrowerID)
-        req['tool'] = Tool.objects.get(id=pend_tx.borrowed_tool.id)
         request_list.append(req)
     return request_list
 

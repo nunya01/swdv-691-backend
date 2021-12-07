@@ -28,18 +28,18 @@
 
 <h2><u>Pending Requests</u></h2>
 
-{% for req in req_list %}
-
-  <div class="card mb-3" style="max-width: 20em; margin: auto;">
-    <h3 class="card-header">Borrow Request</h3>
-    <img src="{{ req.tool.tool_pic.url }}" alt="Image of {{ req.tool.name }}" class="card-img-top">
-    <div class="card-body">
-      <p class="card-text">{{ req.borrower.username }} wants to borrow: {{ req.tool.name }} </p>
+<div class="list-group" style="max-width: 20em; margin: auto;">
+  {% for req in req_list %}
+  <a href="/app/tool_home/{{ req.borrowed_tool.id }}/"
+    class="list-group-item list-group-item-action flex-column align-items-start">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-2"><u>Borrow Request</u></h5>
+      <small>{{ req.timestamp|date:"M. j, Y" }}</small>
     </div>
-    <div class="card-body">
-      <a href="/app/tool_home/{{ req.tool.id }}/" class="card-link">Go to Tool</a>
-    </div>
-  </div>
+    <p class="mb-1">User, {{ req.borrower.username }}, wants to borrow your: {{ req.borrowed_tool.name }}</p>
+    <small>Click on this message to see the request.</small>
+  </a>
+</div>
 
 {% endfor %}
 
@@ -56,16 +56,16 @@
 
 {% for tool in my_tool_list %}
 
-  <div class="card mb-3" style="max-width: 20em; margin: auto;">
-    <h3 class="card-header">{{ tool.name }}</h3>
-    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
-    <div class="card-body">
-      <p class="card-text">Item Description: {{ tool.description }}</p>
-    </div>
-    <div class="card-body">
-      <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
-    </div>
+<div class="card mb-3" style="max-width: 20em; margin: auto;">
+  <h3 class="card-header">{{ tool.name }}</h3>
+  <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
+  <div class="card-body">
+    <p class="card-text">Item Description: {{ tool.description }}</p>
   </div>
+  <div class="card-body">
+    <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
+  </div>
+</div>
 
 {% endfor %}
 
