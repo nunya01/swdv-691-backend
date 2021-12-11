@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block content %}
-<div class="card mb-3 mt-3" style="max-width: 35em; margin: auto;">
+<div class="card mb-5 mt-5" style="max-width: 35em; margin: auto;">
   <div class="row g-0">
-    <div class="col-md-4">
-      <img src="{{ request.user.profile.profile_pic.url }}" class="img-fluid rounded-start"
-        alt="Profile Picture of {{ user.get_username }}" style="max-width: 10em;">
+    <div class="col-md-5">
+      <img src="{{ request.user.profile.profile_pic.url }}" class="img-fluid img-thumbnail rounded-start"
+        alt="Profile Picture of {{ user.get_username }}">
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div class="card-body">
         <h4 class="card-title">Home of: {{ user.get_username }}</h4>
         <p class="card-text">User ID: {{ user.id }}</p>
@@ -20,18 +20,14 @@
   </div>
 </div>
 
-<p><a href="/app/search">Tool Search</a></p>
-<p><a href="/app/create_tool">Add Tool</a></p>
-
-<!-- Display pending requests first -->
-{% if req_list is not None %}
-
+{% if req_list != None %} {# display card for any pending borrow tx #}
 <h2><u>Pending Requests</u></h2>
 
-<div class="list-group" style="max-width: 20em; margin: auto;">
+<div class="list-group mt-3" style="max-width: 35em; margin: auto;">
+
   {% for req in req_list %}
-  <a href="/app/tool_home/{{ req.borrowed_tool.id }}/"
-    class="list-group-item list-group-item-action flex-column align-items-start">
+  <a href="/app/req_confirm/{{ req.id }}/"
+    class="list-group-item list-group-item-action flex-column align-items-start mb-3">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-2"><u>Borrow Request</u></h5>
       <small>{{ req.timestamp|date:"M. j, Y" }}</small>
@@ -39,34 +35,78 @@
     <p class="mb-1">User, {{ req.borrower.username }}, wants to borrow your: {{ req.borrowed_tool.name }}</p>
     <small>Click on this message to see the request.</small>
   </a>
+  {% endfor %}
+
 </div>
-
-{% endfor %}
-
 {% endif %}
 
-<!-- Display tool cards -->
+{% if loaned_list != None %} {# display card for any loaned out tools #}
+<h2><u>Loaned Out Tools</u></h2>
+
+<div class="list-group mt-3" style="max-width: 35em; margin: auto;">
+
+  {% for loan in loaned_list %}
+  <a href="/app/tool_home/{{ loan.borrowed_tool.id }}/"
+    class="list-group-item list-group-item-action flex-column align-items-start mb-3">
+    <div class="d-inline-flex mb-3">
+      <h5 class="mb-2"><u>{{ loan.borrowed_tool.name }}</u></h5>
+    </div>
+    <p class="mb-1">Borrowing User, {{ loan.borrower.username }}, is borrowing: {{ loan.borrowed_tool.name }}</p>
+    <p class="mb-1">Borrower's Name: {{ loan.borrower.profile.cc_fullname }}</p>
+    <p class="mb-1">Phone: {{ loan.borrower.profile.phone }}</p>
+    <p class="mb-1">Email: {{ loan.borrower.email }}</p>
+    <small>Click on this message to see the tool.</small>
+  </a>
+  {% endfor %}
+
+</div>
+{% endif %}
+
+{% if borrowed_list  != None %} {# display card for tools user is borrowing #}
+<h2><u>Tools I'm Borrowing</u></h2>
+
+<div class="list-group mt-3" style="max-width: 35em; margin: auto;">
+
+  {% for borrowed in borrowed_list %}
+  <a href="/app/tool_home/{{ borrowed.borrowed_tool.id }}/"
+    class="list-group-item list-group-item-action flex-column align-items-start mb-3">
+    <div class="d-inline-flex mb-3">
+      <h5 class="mb-2"><u>{{ borrowed.borrowed_tool.name }}</u></h5>
+    </div>
+    <p class="mb-1">You are borrowing: {{ borrowed.borrowed_tool.name }}</p>
+    <p class="mb-1">From username: {{ borrowed.borrowed_tool.owner.username }}</p>
+    <p class="mb-1">From name: {{ borrowed.borrowed_tool.owner.profile.cc_fullname }}</p>
+    <p class="mb-1">Phone: {{ borrowed.borrowed_tool.owner.profile.phone }}</p>
+    <p class="mb-1">Email: {{ borrowed.borrowed_tool.owner.email }}</p>
+    <small>Click on this message to see the tool.</small>
+  </a>
+  {% endfor %}
+
+</div>
+{% endif %}
+
 <h2><u>My Tools</u></h2>
 
-{% if my_tool_list is None %}
-
-<p>You have not shared any tools yet.</p>
-
-{% endif %}
-
-{% for tool in my_tool_list %}
-
-<div class="card mb-3" style="max-width: 20em; margin: auto;">
-  <h3 class="card-header">{{ tool.name }}</h3>
-  <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top">
-  <div class="card-body">
-    <p class="card-text">Item Description: {{ tool.description }}</p>
-  </div>
-  <div class="card-body">
-    <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
+{% for tool in my_tool_list %} {# display tools user is sharing #}
+<div class="card mb-3" style="margin:auto; max-width: 35em;">
+  <div class="row g-0">
+      <div class="col-sm-5">
+        <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img img-thumbnail">
+      </div>
+      <div class="col-sm-7">
+          <div class="card-body">
+              <h5 class="card-title">{{ tool.name }}</h5>
+              <p class="card-text">Item Description: {{ tool.description }}</p>
+              <p class="card-text">Value: {{ tool.tool_value }}</p>
+              <p class="card-text">Visible to others: {% if tool.visible %} Yes {% else %} No {% endif %}</p>
+              <a href="/app/tool_home/{{ tool.id }}/" class="btn btn-primary stretched-link">Go to Tool</a>
+          </div>
+      </div>
   </div>
 </div>
 
+{% empty %}
+<p>You have not shared any tools yet.</p>
 {% endfor %}
 
 {% endblock content %}

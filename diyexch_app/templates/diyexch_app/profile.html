@@ -16,7 +16,8 @@
             {% csrf_token %}
             {{ user_form|crispy}}
             {{ profile_form|crispy }}
-            <button type="submit">Submit</button>
+            <a href="/app/account_home/" class="btn btn-danger">Cancel</a>
+            <button class="btn btn-primary" type="submit">Submit</button>
         </form>
         <p>* CC info is needed in order to borrow a tool.</p>
         <p><a href="/app/account_home">Account Home</a></p>

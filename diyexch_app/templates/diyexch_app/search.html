@@ -9,32 +9,30 @@
 </form><br>
 
 <!-- display error message(s) -->
-{% for msg in srch_error %}
+{% for msg in srch_error %} {# show search error messages #}
   <p>{{ msg }}</p>
 {% endfor %}
 
-<!-- description of display -->
 <h2>{{ title }}</h2>
 
-<!-- Display tool cards -->
-{% for tool in tool_list %}
+{% for tool in tool_list %} {# display tool cards #}
 
   {% if tool.visible %}
-  <div class="card mb-3" style="max-width: 35em; margin: auto;">
-    <h3 class="card-header">{{ tool.name }}</h3>
-    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top" style="max-width: 25em; align-self: center;">
-    <div class="card-body">
-      <p class="card-text">Item Description: {{ tool.description }}</p>
-    </div>
-    <div class="card-body">
-      <a href="/app/tool_home/{{ tool.id }}/" class="card-link">Go to Tool</a>
-      {% if tool.owner != user and user.profile.cc_number != None %}
-      <a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a>
-      {% endif %}
+  <div class="card mb-3" style="margin:auto; max-width: 35em;">
+    <div class="row g-0">
+        <div class="col-sm-5">
+          <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img img-thumbnail">
+        </div>
+        <div class="col-sm-7">
+            <div class="card-body">
+                <h5 class="card-title">{{ tool.name }}</h5>
+                <p class="card-text">Item Description: {{ tool.description }}</p>
+                <a href="/app/tool_home/{{ tool.id }}/" class="btn btn-primary stretched-link">Go to Tool</a>
+            </div>
+        </div>
     </div>
   </div>
   {% endif %}
 
 {% endfor %}
-
 {% endblock content %}

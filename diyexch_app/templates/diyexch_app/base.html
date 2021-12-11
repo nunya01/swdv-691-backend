@@ -6,13 +6,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css" href="{% static '/css/bootstrap.min.css' %}" />
   <title>DIY Tool Exchange</title>
 </head>
 
-<!-- Navbar base on users login status -->
-<header>
+<body style="text-align: center;">
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">DIY Tool Exchange</a>
@@ -20,12 +18,15 @@
         aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       {% if user.is_authenticated %}
-      <!-- User is Authenticated -->
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'share' %}">Share Tool</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'search' %}">Tool Search</a>
@@ -36,7 +37,7 @@
             <div class="dropdown-menu">
               <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
               <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
-              <a class="dropdown-item" href="{% url 'about' %}">About</a>
+              <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#aboutBackdrop" href="#">About</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="#">Terms and
                 Conditions</a>
@@ -50,7 +51,7 @@
         </form>
       </div>
       {% else %}
-      <!-- User is NOT Authenticated -->
+      {# user is not authenticated #}
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
@@ -60,7 +61,7 @@
             <a class="nav-link" href="{% url 'register' %}">Register</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'about' %}">About</a>
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#aboutBackdrop" href="#">About</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="#">Terms and
@@ -69,32 +70,28 @@
         </ul>
       </div>
       {% endif %}
+
   </nav>
-</header>
 
-
-<body style="text-align: center;">
-  <!-- loop through any error messages -->
-  {% for eMsg in err_msgs%}
-  <div class="alert alert-dismissible alert-primary">
+  {% for eMsg in err_msgs %} {# errpr message loop #}
+  <div class="alert alert-dismissible alert-primary mt-2">
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     <strong>Notice:</strong> {{ eMsg }}
   </div>
   {% endfor %}
 
-  <!-- loop through any success messages -->
-  {% for sMsg in succ_msgs %}
-  <div class="alert alert-dismissible alert-success">
+  {% for sMsg in succ_msgs %} {# succ message loop #}
+  <div class="alert alert-dismissible alert-success mt-2">
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     <strong>Success!</strong> {{ sMsg }}
   </div>
   {% endfor %}
 
-  <!-- Block content for templates -->
   {% block content %}
+  {# block content embedded here #}
   {% endblock content %}
 
-  <!-- Modal -->
+  <!-- Modals -->
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -120,13 +117,35 @@
     </div>
   </div>
 
+  <div class="modal fade" id="aboutBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="aboutBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="aboutBackdropLabel">About the DIY Tool Exchange</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="text-align: left;">
+          <p>This site is a place for DIY'ers (or anyone else!) to loan and borrow tools.</p>
+          <p>Currently, the site is like a "lending library" for tools.</p>
+          <p>In order to facilitate a larger library, in the future, tool owners may be able to charge a small rental
+            fee.</p>
+          <p>Some of the tools on this site are FSBO.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
+
+  <div class="footer">
+    Copyright 2021
+  </div>
 </body>
-<footer>
-  Copyright 2021
-</footer>
 
 </html>

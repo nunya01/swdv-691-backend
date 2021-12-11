@@ -1,0 +1,47 @@
+{% extends "diyexch_app/base.html" %}
+
+{% block content %}
+<h2><u>Borrow Request Confirmation</u></h2>
+
+<div class="container-fluid" style="max-width: 35em; margin: auto;">
+    <div class="card mb-3 mt-3" style="margin: auto;">
+        <div class="row g-0">
+            <div class="col-md-5">
+                <img src="{{ req.borrower.profile.profile_pic.url }}" class="img-fluid rounded-start"
+                    alt="Profile Picture of {{ req.borrower.get_username }}">
+            </div>
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h4 class="card-title">Requestor: {{ req.borrower.get_username }}</h4>
+                    <p class="card-text">Name: {{ req.borrower.profile.cc_fullname }}</p>
+                    <p class="card-text">User ID: {{ req.borrower.id }}</p>
+                    <p class="card-text">Zip Code: {{ req.borrower.profile.zip_code }}</p>
+                    <p class="card-text">Email: {{ req.borrower.email }}</p>
+                    <p class="card-text">Phone: {{ req.borrower.profile.phone }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3" style="margin:auto;">
+        <div class="row g-0">
+            <div class="col-sm-5">
+                <img src="{{ req.borrowed_tool.tool_pic.url }}" alt="Image of {{ req.borrowed_tool.name }}"
+                    class="card-img-top h-100">
+            </div>
+            <div class="col-sm-7">
+                <div class="card-body">
+                    <h5 class="card-title">{{ req.borrowed_tool.name }}</h5>
+                    <p class="card-text">Item Description: {{ req.borrowed_tool.description }}</p>
+                    <a href="/app/tool_home/{{ req.borrowed_tool.id }}/" class="btn btn-primary stretched-link">Go to
+                        Tool</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3 mb-5">
+        <a href="/app/approve_borrow/{{ req.id }}/" class="btn btn-success">Approve</a>
+        <a href="/app/cancel_borrow/{{ req.id }}/" class="btn btn-danger">Cancel</a>
+    </div>
+</div>
+{% endblock content %}

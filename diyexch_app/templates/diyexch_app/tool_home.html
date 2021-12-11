@@ -1,25 +1,64 @@
 {% extends "diyexch_app/base.html" %}
 
 {% block content %}
-<h1>{{ tool.name }}</h1>
-<p>{{ tool.description }}</p>
-<p>Value: ${{ tool.tool_value }}</p>
+<div class="card mb-3" style="max-width: 35em; margin: auto;">
+    <h3 class="card-header">{{ tool.name }}</h3>
+    <img src="{{ tool.tool_pic.url }}" alt="Image of {{ tool.name }}" class="card-img-top img-thumbnail img-fluid">
+    <div class="card-body">
+        <p class="card-text">Tool Description: {{ tool.description }}</p>
+        <p class="card-text">Value: ${{ tool.tool_value }}</p>
 
-{% if tool.for_sale %}
-<p class="text-info">This tool is for sale!</p>
+        {% if tool.for_sale %}
+        <p class="text-info">This tool is for sale!</p>
+        {% endif %}
+
+    </div>
+    <div class="card-body">
+        {% if user == tool.owner %}
+
+            {% if borrow_tx == None %}
+            <p><a href="/app/delete_tool/{{ tool.id }}/">Delete Tool</a></p>
+            <p><a href="/app/update_tool/{{ tool.id }}/">Update Tool</a></p>
+
+        {% else %}
+            <p><a href="/app/return_tool/{{ borrow_tx.id }}/">Mark as Returned</a></p>
+
+        {% endif %}
+
+        {% else %}
+        
+            {% if user.profile.cc_number == '' %} {# User isnt qualified to borrow #}
+                <p class="text-warning">You must have a credit card on file to borrow a tool.</p>
+            {% else %}
+
+                {% if borrow_tx == None %}
+                    <p><a href="/app/borrow_tool/{{ tool.id }}/" class="card-link">Borrow Tool</a></p>
+                {% endif %}
+
+            {% endif %}
+
+        {% endif %}
+    </div>
+</div>
+
+
+{% if user != tool.owner %} {# tool owner doesnt need to see this #}
+<div class="card mb-5 mt-3" style="max-width: 35em; margin: auto;">
+    <div class="row g-0">
+        <div class="col-md-3">
+            <img src="{{ tool.owner.profile.profile_pic.url }}" class="img-fluid img-thumbnail rounded-start"
+                alt="Profile Picture of {{ tool.owner.get_username }}">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <h4 class="card-title">Owner: {{ tool.owner.get_username }}</h4>
+                <p class="card-text">Zip Code: {{ tool.owner.profile.zip_code }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
-<p><img src="{{ tool.tool_pic.url }}" style="max-width: 15em;"></p>
+<p><a href="/app/account_home">My Home</a></p>
 
-{% if user == tool.owner %}
-<p><a href="/app/delete_tool/{{ tool.id }}/">Delete Tool</a></p>
-{% else %}
-    {% if user.profile.cc_number == None %}
-    <p class="text-warning">You must have a credit card on file to borrow a tool.</p>
-    {% else %}
-    <p><a href="/app/borrow_tool/{{ tool.id }}/">Borrow Tool</a></p>
-    {% endif %}
-{% endif %}
-
-<p><a href="/app/account_home">Account Home</a></p>
 {% endblock content %}

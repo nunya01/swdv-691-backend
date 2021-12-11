@@ -3,6 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from . utils import image_resize
 
 
 def user_directory_path(instance, filename):
@@ -13,7 +14,7 @@ def user_directory_path(instance, filename):
 # Create your models here.
 
 class Profile(models.Model):
-    # Profile class builds on the included User class without modifying the
+    # Profile object layout - class builds on the included User class without modifying the
     # built-in User model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     cc_fullname = models.CharField(max_length=255, blank=True, null=True)
@@ -23,8 +24,17 @@ class Profile(models.Model):
     phone = models.CharField(max_length=16)
     profile_pic = models.ImageField(blank=True, null=True, upload_to=user_directory_path)
     terms_and_cond = models.BooleanField(default=False)
+    def __str__(self):
+        return f'{self.user.username}'
 
-# These functions update the Profile when a User is created
+    # override save to resize large images
+    def save(self, *args, **kwargs):
+        if self.profile_pic != None:
+            image_resize(self.profile_pic, 768, 768)
+        super().save(*args, **kwargs)
+
+
+# These helper functions create/update the Profile when a User is created/updated
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -36,6 +46,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Tool(models.Model):
+    # Tool object layout
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     tool_value = models.DecimalField(max_digits=10, decimal_places=2)
     for_sale = models.BooleanField()
@@ -47,9 +58,15 @@ class Tool(models.Model):
         return f'{self.name}'
 
 
+    # override save to resize large images
+    def save(self, *args, **kwargs):
+        if self.tool_pic != None:
+            image_resize(self.tool_pic, 1028, 1028)
+        super().save(*args, **kwargs)
+
+
 class Borrow_tx(models.Model):
-    # Use "delete" code, logic, or SP to make sure borrower cannot be deleted while borrowing tool,
-    # make sure that tool cannot be deleted while borrowed
+    # Borrow-tx (borrow transaction) layout
     borrowed_tool = models.ForeignKey(Tool, on_delete=models.RESTRICT)
     borrower = models.ForeignKey(User, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now_add=True)
